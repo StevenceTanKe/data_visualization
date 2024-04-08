@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>heat map</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html,
+        body,
+        #container {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div class="input-card" style="width: auto;">
+    <div class="input-item">
+        <button class="btn" onclick="heatmap.show()">Show Heat Map</button>
+    </div>
+    <div class="input-item">
+        <button class="btn" onclick="heatmap.hide()">Close Heat Map</button>
+    </div>
+</div>
+<script src="//webapi.amap.com/maps?v=1.4.15&key=4ac30f2d0e3b3f9f5b3d8b2fee881d87"></script>
+<script src="heatmapData.js"></script>
+<script>
+    var map = new AMap.Map("container", {
+        resizeEnable: true,
+        center: [113.545515, 22.191844],
+        zoom: 15
+    });
+
+    if (!isSupportCanvas()) {
+        alert('The heat map is only applicable to browsers that support canvas. ' +
+            'The heat map function cannot be used in the browser you are using. ' +
+            'Please try another browser~~')
+    }
+
+    var heatmap;
+    map.plugin(["AMap.Heatmap"], function () {
+        // Initialize heatmap object
+        heatmap = new AMap.Heatmap(map, {
+            radius: 25,
+            opacity: [0, 0.8],
+            gradient:{
+                0.2: 'blue',
+                0.3: 'rgb(117,211,248)',
+                0.4: 'rgb(0, 255, 0)',
+                0.5: '#ffea00',
+                0.8: 'rgb(255,90,0)',
+                1.0: 'red'
+            }
+        });
+        // Set the data set:
+        // This data is Macau attractions data
+        heatmap.setDataSet({
+            data: heatmapData,
+            max: 44
+        });
+    });
+
+    // Judge whether the browsing area supports canvas
+    function isSupportCanvas() {
+        var elem = document.createElement('canvas');
+        return !!(elem.getContext && elem.getContext('2d'));
+    }
+</script>
+</body>
+</html>
