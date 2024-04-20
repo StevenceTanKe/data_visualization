@@ -95,10 +95,9 @@
         marker.setTitle(names[index]);
 
         marker.setLabel({
-            offset: new AMap.Pixel(-5, -5),  //设置文本标注偏移量
-            // content: "<div class='info'>names[index]</div>", //设置文本标注内容
-            content: names[index], //设置文本标注内容
-            direction: 'top' //设置文本标注方位
+            offset: new AMap.Pixel(2, 2),
+            content: names[index],
+            direction: 'top'
         });
 
         map.add(marker);
