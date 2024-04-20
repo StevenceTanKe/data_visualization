@@ -23,7 +23,7 @@
 <body>
 <div id="container"></div>
 <script src="//webapi.amap.com/maps?v=1.4.15&key=4ac30f2d0e3b3f9f5b3d8b2fee881d87&plugin=Map3D"></script>
-<script type="text/javascript" src="route_multiday_tour.js" charset="gb2312"></script>
+<script type="text/javascript" src="route_multiday_tour.js"></script>
 <script>
     var points = []; // Used to store map points
     var names = [];  // Used to store location names
@@ -35,7 +35,7 @@
 
     var map = new AMap.Map('container', {
         center: [113.54848, 22.185],
-        zoom: 16,
+        zoom: 15,
         viewMode: '3D',
         pitch: 30
     });
