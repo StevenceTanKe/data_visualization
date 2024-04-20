@@ -1,66 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>Optimal route for multiple attractions</title>
+    <title>Optimal route for multi-day tour</title>
     <style>
         html, body, #container {
-            margin: 0; padding: 0; width: 100%; height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
         }
 
-        .inputs {
-            position: absolute;
-            bottom: 20px;
-            right: 40px;
+        .amap-icon img {
+            width: 25px;
+            height: 34px;
         }
     </style>
 </head>
 <body>
 <div id="container"></div>
 <script src="//webapi.amap.com/maps?v=1.4.15&key=4ac30f2d0e3b3f9f5b3d8b2fee881d87&plugin=Map3D"></script>
+<script type="text/javascript" src="route_multiday_tour.js" charset="gb2312"></script>
 <script>
-    var points = [
-        new AMap.LngLat(113.54158,22.176748), // 澳门塔
-        new AMap.LngLat(113.540052,22.183864), // 西望洋山
-        new AMap.LngLat(113.540301,22.183896), // 主教山小堂
-        new AMap.LngLat(113.541846,22.187614), // 圣老楞佐堂
-        new AMap.LngLat(113.542617,22.188972), // 圣若瑟修院藏珍馆
-        new AMap.LngLat(113.542912,22.189251), // 岗顶前地
-        new AMap.LngLat(113.544961,22.190658), // 议事亭前地
-        new AMap.LngLat(113.545206,22.190323), // 邮政总局
-        new AMap.LngLat(113.54662,22.19062), // 圣母诞辰主教座堂
-        new AMap.LngLat(113.545515,22.191844), // 玫瑰圣母堂
-        new AMap.LngLat(113.545826,22.193182), // 大三巴街
-        new AMap.LngLat(113.545399,22.194166), // 恋爱巷
-        new AMap.LngLat(113.545883,22.194627), // 大三巴牌坊
-        new AMap.LngLat(113.544659,22.196011), // 天主教圣安多尼堂
-        new AMap.LngLat(113.548921,22.194866), // 疯堂斜巷
-        new AMap.LngLat(113.552202,22.195176), // 塔石广场
-        new AMap.LngLat(113.553674,22.19387), // 东望洋山
-        new AMap.LngLat(113.554727,22.193465), // 东望洋炮台及灯塔
-        new AMap.LngLat(113.558608,22.191407), // 金莲花广场
-        new AMap.LngLat(113.561512,22.189432) // 澳门渔人码头
-    ];
+    var points = []; // Used to store map points
+    var names = [];  // Used to store location names
+
+    multidayData.forEach(function (item) {
+        points.push(new AMap.LngLat(item.lng, item.lat));
+        names.push(item.Attraction);
+    });
 
     var map = new AMap.Map('container', {
-        center: [113.54848,22.185],
+        center: [113.54848, 22.185],
         zoom: 16,
         viewMode: '3D',
-        pitch: 55
+        pitch: 30
     });
 
     var object3Dlayer = new AMap.Object3DLayer();
 
-    points.forEach(function(point, index) {
+    points.forEach(function (point, index) {
         if (index < points.length - 1) {
             var segmentPoints = [points[index], points[index + 1]];
             var meshLine = new AMap.Object3D.MeshLine({
                 path: segmentPoints,
                 height: [5, 5],
                 color: 'rgba(55,129,240, 0.9)',
-                width: 10
+                width: 5
             });
             meshLine.transparent = true;
             object3Dlayer.add(meshLine);
@@ -68,6 +57,52 @@
     });
 
     map.add(object3Dlayer);
+
+
+    //Create different markers based on the position of the point
+    points.forEach(function (point, index) {
+        let iconUrl = '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-via-marker.png';
+        let imageOffset = new AMap.Pixel(-13, -30);
+
+        if (index === 0 || index === points.length - 1) {
+            if (index === 0) { // starting point
+                iconUrl = '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png';
+                imageOffset = new AMap.Pixel(-9, -3);
+            } else if (index === points.length - 1) { //end point
+                iconUrl = '//a.amap.com/jsapi_demos/static/demo-center/icons/dir-marker.png';
+                imageOffset = new AMap.Pixel(-95, -3);
+            }
+            var markerContent = ''
+            var marker = new AMap.Marker({
+                position: point,
+                icon: new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: iconUrl,
+                    imageSize: new AMap.Size(135, 40),
+                    imageOffset: imageOffset
+                }),
+                content: markerContent,
+                offset: new AMap.Pixel(-13, -30)
+            });
+        } else {
+            var marker = new AMap.Marker({
+                position: point,
+                icon: iconUrl,
+                offset: new AMap.Pixel(-13, -30)
+            });
+        }
+
+        marker.setTitle(names[index]);
+
+        marker.setLabel({
+            offset: new AMap.Pixel(-5, -5),  //设置文本标注偏移量
+            // content: "<div class='info'>names[index]</div>", //设置文本标注内容
+            content: names[index], //设置文本标注内容
+            direction: 'top' //设置文本标注方位
+        });
+
+        map.add(marker);
+    });
 </script>
 </body>
 </html>
